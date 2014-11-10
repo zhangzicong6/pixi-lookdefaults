@@ -9,6 +9,9 @@ pixi 需两个父级元素stage 和 renderer，stage设置舞台背景属性，r
 `document.body.appendChild(renderer.view);`必不可少。renderer.view即canvas 
 
 了解pixi大概使用情况，那么就开始做游戏吧 
+ 
+ ![Alt text](/img/jietu.png)  
+ 
 
 
 首先加载图片资源，pixi中有加载图片的loader，加载图片完成后再做操作，可避免一些图片还没加载完成游戏已开始的一些问题
@@ -74,5 +77,5 @@ pixi 需两个父级元素stage 和 renderer，stage设置舞台背景属性，r
         requestAnimFrame(animate);
       }
       requestAnimFrame(animate); 
-  
+
 大家可以看到这是一个递归，而且当gameOver是true的时候是无限递归，requestAnimFrame是当当前帧绘制完成调用，也就是不断的绘制这个页面，使这个游戏页面动起来，另外需要注意的是pixi加载图片需要在有服务器的环境下，即你需要搭一个服务器，把它放进去
