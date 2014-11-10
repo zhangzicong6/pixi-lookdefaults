@@ -1,0 +1,148 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+      <title>pixi.js</title>
+      <style>
+           html body {
+              height: 100%;
+              width: 100%;
+              margin: 0;
+              padding: 0;
+              background-color: #F06060;
+            }
+      </style>
+      <script src="./js/pixi.js"></script>
+</head>
+<body>
+      <script type="text/javascript">
+        //舞台，添加一系列元素
+        var stage = new PIXI.Stage(0xF06060);
+        var width = screen.width;
+        var height = screen.height;
+        var radius = 320;
+        var score=0;
+        var count=[2,2];
+        var time =60;
+        var gameOver=false;
+        var fantrue;
+        var fanfalse;
+        var assetsToLoader = ["./img/fantrue.png","./img/fanfalse.png"];
+        //加载图片
+        loader = new PIXI.AssetLoader(assetsToLoader);
+        //图片加载完成后游戏开始
+        loader.onComplete = function (){
+          fantrue=PIXI.Texture.fromImage(assetsToLoader[0]);
+          fanfalse=PIXI.Texture.fromImage(assetsToLoader[1]);
+          initimg();
+          setInterval("setTimes()",1000);
+        };
+        loader.load();
+       
+       
+       //renderer是pixi的显示绘制的对象，renderer.view即canvas
+       var renderer = PIXI.autoDetectRenderer(width, height);
+       document.body.appendChild(renderer.view);
+       //一个container类似一个div 里面可以添加多个子元素，并且container的动画影响子元素。
+       var container = new PIXI.DisplayObjectContainer();
+       container.width=radius;
+       container.height=radius;
+       container.position.x = (width-radius)/2;
+       container.position.y = (height-radius)/2;
+       stage.addChild(container);
+       //添加积分
+       var scoreBoard = new PIXI.DisplayObjectContainer();
+       var scoreText = new PIXI.Text(score,{font: "18px Arial bold", align: "center",fill:"#fff"});
+      scoreText.position.x = 10;
+      scoreText.position.y = 5;
+      scoreBoard.addChild(scoreText);
+      //添加计时
+      var timeText = new PIXI.Text(time,{font: "18px Arial bold", align: "center",fill:"#fff"});
+      timeText.position.x = 80;
+      timeText.position.y = 5;
+      scoreBoard.addChild(timeText);
+      stage.addChild(scoreBoard);
+      //调用下一帧 canvas 的方法，animate中再次调用requestAnimationFrame方法，使得页面不停的被绘制。
+      requestAnimationFrame(animate);
+      //计时
+       function setTimes(){
+          if(time==0){
+            gameOver=true;
+          }
+          time--;
+          timeText.setText(time);
+       }
+       //使页面不停的被渲染，游戏如果结束，停止渲染
+       function animate(){
+        if(gameOver){
+          return;
+        }
+          renderer.render(stage);
+          requestAnimFrame(animate);
+       }
+       //游戏的核心算法，判断游戏的分数，进行游戏难度的升级，游戏增加难度主要是，游戏图片增加（游戏图片在水平和垂直方向各加一）
+       function change(){
+          score++;
+          scoreText.setText(score);
+          if(score<2){
+            initimg();
+          }else if(score<6){
+            if(score==2){
+              count[0]++;
+              count[1]++;
+            }
+            initimg();
+          }else if(score<10){
+            if(score==6){
+              count[0]++;
+              count[1]++;
+            }
+            initimg();
+          }else if(score<15){
+            if(score==10){
+              count[0]++;
+              count[1]++;
+            }
+            initimg();
+          }else{
+            if(score==15){
+              count[0]++;
+              count[1]++;
+            }
+            initimg();
+          }
+       }
+       //游戏图片渲染，渲染前先清空之前图片，按照难度即每个方向上图片个数，图片越多，则单个图片越小，并随机产生一个真图片的坐标（第几个是真的），真的图片和假的图片一块儿渲染上去
+       function initimg(){
+          var m=parseInt(Math.random()*count[0]*count[1]);
+          //console.log(m);
+          if(container.children.length){
+            container.removeChildren();
+          }      
+          var n=0;
+          for (var i = 0; i < count[0]; i++) {
+              for (var j = 0; j < count[1]; j++) {
+                  var sprite=null;
+                  if(m==n){
+                  //Sprite 是渲染图片的一个类，也可对Sprite进行位置大小设置,也可对其进行事件监听
+                    sprite=new PIXI.Sprite(fantrue);
+                    sprite.interactive = true;
+                    sprite.mousedown=sprite.touchstart=function(){
+                      change();
+                    };
+                  }else{
+                    sprite=new PIXI.Sprite(fanfalse);
+                  }
+                  sprite.width=radius/count[0];
+                  sprite.height=radius/count[0];
+                  sprite.anchor.x=0;
+                  sprite.anchor.y=0;
+                  sprite.position.x = j*sprite.width;
+                  sprite.position.y = i*sprite.height;
+                  container.addChild(sprite);
+                  n++;
+              };
+          };
+       }
+      </script>
+</body>
+</html>
